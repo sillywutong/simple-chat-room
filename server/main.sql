@@ -45,3 +45,4 @@ CREATE TABLE "friends"(
 "user_id2" INTEGER NOT NULL,
 PRIMARY KEY("user_id1", "user_id2")
 );
+/* 不可以删除好友 */
