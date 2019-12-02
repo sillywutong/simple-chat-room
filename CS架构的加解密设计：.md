@@ -5,9 +5,9 @@
 
 层1 解密前
 
-| msg length（本来的message加上padding加密之后的长度） | AES padding length 以字节为单位 | AES 初始向量 | MESSAGE    | TAG 用于完整性验证 |
-| ---------------------------------------------------- | ------------------------------- | ------------ | ---------- | ------------------ |
-| 4bytes                                               | 1 byte                          | 12 bytes     | msg length | 16 bytes           |
+| msg length（本来的message加上padding加密之后的长度） | AES padding length 以字节为单位 | AES 初始向量 | Tag      | MESSAGE    |
+| ---------------------------------------------------- | ------------------------------- | ------------ | -------- | ---------- |
+| 4bytes                                               | 1 byte                          | 12 bytes     | 16 bytes | msg length |
 
 层2 解密后 （得到解密的message）
 
