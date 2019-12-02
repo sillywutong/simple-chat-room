@@ -5,13 +5,56 @@
 
 层1 解密前
 
-| msg Length 以字节为单位，是不含padding的真实长度 | AES padding length 以字节为单位 | AES 初始向量 | MESSAGE | TAG 用于完整性验证 |
-| ------------------------------------------------ | ------------------------------- | ------------ | ------- | ------------------ |
-| 4bytes                                           | 1 byte                          | 12 bytes     | \       | 16 bytes           |
+| msg length（本来的message加上padding加密之后的长度） | AES padding length 以字节为单位 | AES 初始向量 | MESSAGE    | TAG 用于完整性验证 |
+| ---------------------------------------------------- | ------------------------------- | ------------ | ---------- | ------------------ |
+| 4bytes                                               | 1 byte                          | 12 bytes     | msg length | 16 bytes           |
 
 层2 解密后 （得到解密的message）
 
-|
+| MSG TYPE | BODY LENGTH | MSG BODY(全部都是dict，dict里面可嵌套list) |
+| -------- | ----------- | ------------------------------------------ |
+| 4 bytes  | 4 bytes     | body length ，键长-键-值类型-值长-值       |
+
+消息类型总共有：
+
+1. 登录：{username:  , password:  }
+2. 注册: {username: , password: }
+3. 加好友（发起私聊）{from: , to:  }(无需带上时间，只是把两个人的关系放进数据库)
+4. 发起群聊: {from:    number:      ，['username1',   'username2',   'username3'...  ]    } 
+5. 邀请用户进群聊：{ groupid:      username:    }
+6. 聊天消息:{ type :  (0,1表示私聊和群聊)  ,  target_id:  , message：{ type:（0，1表示文字或图片) ,data: } }
+7. （查询群内成员，隐式发送） ：{ group_id: }
+8. 
+9. 服务器响应登录成功：{ user_id: , username: }
+10. 登录成功后服务器发送用户好友列表和群组列表（用于初始化窗口的，也可以读取本地聊天记录，但本地读取文件应该比较慢？,以及未读消息{‘friends': [{'username':,'user_id'], 'groups':[{'group_name': ,'group_id': }], 'msg':[按type18发送 ]}
+11. 服务器响应登录失败: {errorcode}
+12. 服务器响应注册成功: {user_id: , username: }
+13. 服务器响应注册失败：{errorcode}
+14. 服务器响应发起私聊：{status: } 0表示已经发起过聊天，直接打开以前的窗口，不需要加到数据库里；1 表示是新的好友，开启一个新的窗口
+15. 服务器响应发起群聊：{ group id: ，group_name: }
+16. 被添加进一个新群聊： {group id: , group_name: }   收到之后会发送一条查询群内成员的报文。
+17. 返回群内成员：{group id: ,number: ,['username', 'username', 'username' ,.....]
+18. 服务器转发聊天消息： { type:, time: , sender_id:, sender_name: , target_id:, target_name: , message: {type :, data:}}    以这个格式存到数据库中，也以这个格式转发给消息接收者和消息发送者，双方都会以这个格式存进本地聊天记录文件(.json)
+19. 重复登录踢出 ：{} (body length=0)
+20. 错误消息： {data:'sdfjskdjfkjskdjfksjdkfjk '}
+
+
+
+层3 编码与解码 MSG BODY
+
+MSG BODY是一个字典，根据层二的 BODY LENGTH读出整个MSG BODY. MSG BODY解码之后应该是键值对，键都是字符串str.encode(); .decode(). 值有多种类型，所以还得给出值的类型才能解码。层3是：
+
+| key length | key        | value type | value length | value        |
+| ---------- | ---------- | ---------- | ------------ | ------------ |
+| 1 bytes    | key length | 1 bytes    | 4 bytes      | value length |
+
+value type 有：
+
+整数， string 字符串（包括各种名字，时间）， bool（私聊/群聊，文字/图片），list列表，列表里面可以嵌套任何东西，可以是n个层3的字典。 dict 层3嵌套。
+
+
+
+
 
 
 
