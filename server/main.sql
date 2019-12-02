@@ -33,7 +33,7 @@ DROP TABLE IF EXISTS "main"."group";
 CREATE TABLE "group"(
 "group_id" INTEGER NOT NULL,
 "user_id" INTEGER NOT NULL,
-PRIMARY KEY("group_id" ASC)
+PRIMARY KEY("group_id" ASC, "user_id")
 );
 
 -- --------------------------------------------
