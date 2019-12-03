@@ -7,7 +7,7 @@ from common.config import get_config
 import hashlib
 from common.utils import *
 import struct
-from common.message import pack_app_message, unpack_message
+from common.message import GeneralMessage
 
 class Session:
     def __init__(self, socket, session_key):
@@ -21,23 +21,18 @@ class Session:
         '''
         nonce = get_random_bytes(12)
         cipher = AES.new(key=self.session_key, nonce=nonce, mode=AES.MODE_GCM)
-        data_to_encrypt = pack_app_message(msg_type, msg_body) # to do, will serialize body, add len(body), serialize msg_type, return bytes
+        data_to_encrypt = GeneralMessage.encode(msg_type, msg_body) # to do, will serialize body, add len(body), serialize msg_type, return bytes
         length = len(data_to_encrypt)
         padding = math.ceil(length / 16) * 16 - length
         for i in range(padding):
             data_to_encrypt += b'\0'
-
+        print("length of data to encrypt: %d", len(data_to_encrypt))
         encrypted_data, tag = cipher.encrypt_and_digest(data_to_encrypt) # MAC tag =16 bytes
-        print("client nonce:")
-        print(nonce)
-        print("encypted data from client :" )
-        print(encrypted_data)
-        print("tag from client:")
-        print(tag)
         # length of message, padding, nounce, tag, message
         length_of_message = len(encrypted_data)
-        print(struct.pack('!L', length_of_message) + bytes([padding]) + encrypted_data +tag)
-        self.socket.send(struct.pack('!L', length_of_message) + bytes([padding]) + nonce + tag + encrypted_data)
+        print("length of message:")
+        print(length_of_message)
+        return self.socket.send(struct.pack('!L', length_of_message) + bytes([padding]) + nonce + tag + encrypted_data)
         # struct.pack 将length_of_message按前面的格式字符串打包成字节串，L表示long(4字节)，！表示大端
 
     def get_message(self, data):
@@ -65,7 +60,7 @@ class Session:
         if padding != 0:
             decrypted_msg = decrypted_msg[0: -padding]
         print("unpack message ")
-        return unpack_message(decrypted_msg)
+        return GeneralMessage.decode(decrypted_msg)
 
 
 

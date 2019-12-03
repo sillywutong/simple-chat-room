@@ -29,6 +29,8 @@ def is_friend(user_id1, user_id2):
         判断user_id2 是不是user_id1的好友
     '''
     return False
+def get_group_name(group_id):
+    return ''
 
 def get_group_members_id(group_id):
     '''

@@ -11,16 +11,16 @@
 
 层2 解密后 （得到解密的message）
 
-| MSG TYPE | BODY LENGTH | MSG BODY(全部都是dict，dict里面可嵌套list) |
-| -------- | ----------- | ------------------------------------------ |
-| 4 bytes  | 4 bytes     | body length ，键长-键-值类型-值长-值       |
+| MSG TYPE | MSG BODY(全部都是dict，dict里面可嵌套list) |
+| -------- | ------------------------------------------ |
+| 4 bytes  | body length ，键长-键-值类型-值长-值       |
 
-消息类型总共有：
+消息类型总共有：(具体格式和类型编号看`GeneralMessage.py`)
 
 1. 登录：{username:  , password:  }
 2. 注册: {username: , password: }
 3. 加好友（发起私聊）{from: , to:  }(无需带上时间，只是把两个人的关系放进数据库)
-4. 发起群聊: {from:    number:      ，['username1',   'username2',   'username3'...  ]    } 
+4. 发起群聊: {group_name:,   number:      ，['username1',   'username2',   'username3'...  ]    } 
 5. 邀请用户进群聊：{ groupid:      username:    }
 6. 聊天消息:{ type :  (0,1表示私聊和群聊)  ,  target_id:  , message：{ type:（0，1表示文字或图片) ,data: } }
 7. （查询群内成员，隐式发送） ：{ group_id: }

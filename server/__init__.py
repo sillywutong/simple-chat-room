@@ -4,6 +4,8 @@ from common.config import get_config
 from common.channel.Session import server_new_session
 from server.server_global import *
 import struct 
+from PIL import Image
+import io
 def run():
     config = get_config()
 
@@ -41,12 +43,10 @@ def run():
                     bytes_buffer[sess] = bytes()   # struct.unpack的返回结果为元组，即使只包含一个条目
                     # msg length + padding 1+ nonce 12 + tag 16 + msg
                     to_receive[sess] = struct.unpack('!L', length_bytes)[0] + 1 + 12 + 16
-            
-            #print("toreceive: %d" % to_receive[sess])
-            #print("received : %d" % received[sess])
+                        
             bytes_buffer[sess] += sess.socket.recv(to_receive[sess] - received[sess]) 
             #print("length of buffer %d "  % len(bytes_buffer[sess]))
-            received[sess] += len(bytes_buffer[sess])
+            received[sess] = len(bytes_buffer[sess])
 
             if received[sess] == to_receive[sess] and len(bytes_buffer[sess])!=0:
                 print("receive a package")
