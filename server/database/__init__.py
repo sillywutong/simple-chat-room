@@ -14,7 +14,6 @@ def get_user(user_id):
         id: id,
         username: username,
         password: password,
-        online: 是否在线
     '''
     return {}
 
