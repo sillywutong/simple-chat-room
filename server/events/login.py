@@ -32,7 +32,21 @@ def run(session, parameters):
         session.send(GeneralMessage.LG_OK, {'user_id': user_id, 'username':username})
 
         initialize_data={}
-        
+        # 初始化好友列表
+        friends=database.get_friend(user_id)
+        initialize_data['friends']=friends
+
+        # 初始化加入的群列表
+        groups=database.get_group(user_id)
+        initialize_data['groups']=groups
+
+        # 发送离线消息
+        msg = database.get_offline_messages(user_id)
+        initialize_data['msg']=msg
+
+        session.send(GeneralMessage.INITIALIZE, initialize_data)
+
+
             
 
     
