@@ -1,4 +1,5 @@
 from binascii import unhexlify
+from hashlib import md5 as _md5
 # long_to_bytes code from: https://stackoverflow.com/questions/8730927/convert-python-long-int-to-fixed-size-byte-array
 def long_to_bytes (val, endianness='big'):
     """
@@ -34,6 +35,10 @@ def long_to_bytes (val, endianness='big'):
 
     return s
 
+def md5(text):
+    m = _md5()
+    m.update(text.encode('utf-8'))
+    return m.hexdigest()
 
 class Buffer:
   def __init__(self, data):

@@ -13,6 +13,7 @@ class Session:
     def __init__(self, socket, session_key):
         self.socket = socket
         self.session_key = session_key
+        self.user_id = None
 
     def send(self, msg_type, msg_body={}):
         '''
@@ -61,6 +62,9 @@ class Session:
             decrypted_msg = decrypted_msg[0: -padding]
         print("unpack message ")
         return GeneralMessage.decode(decrypted_msg)
+    def close():
+        self.socket.close()
+
 
 
 

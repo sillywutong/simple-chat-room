@@ -3,6 +3,7 @@ import socket
 import select
 from client import client_global
 import io
+from common.message import GeneralMessage
 
 def run():
     try:
@@ -13,6 +14,6 @@ def run():
         image = image_file.read()
         img = bytes(image)
     #io = io.BytesIO(img)
-    length = client_global.session.send(msg_type=1, msg_body={'nothing':0,'something':[1,2,3,'string!','中文',{'another dict': 12345, 'username':'rarecu'}],'image': img})
+    length = client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body={'nothing':0,'something':[1,2,3,'string!','中文',{'another dict': 12345, 'username':'rarecu'}],'image': 123})
     print("length to send: %d" % length)
     client_global.session.send(msg_type=2, msg_body={})

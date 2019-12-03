@@ -3,6 +3,7 @@ import select
 from common.config import get_config
 from common.channel.Session import server_new_session
 from server.server_global import *
+from server.events import handle_event
 import struct 
 from PIL import Image
 import io
@@ -53,6 +54,8 @@ def run():
                 received[sess] = 0
                 to_receive[sess] = 0
                 data = sess.get_message(bytes_buffer[sess])
+                print(data)
+                handle_event(sess, data['msg_type'], data['msg_body'])
                 bytes_buffer[sess] = bytes()
 
 

@@ -82,8 +82,8 @@ KICK = 500
 GENERAL_ERROR = 501
 # error_msg
 
-MessageType=[LOGIN, REGISTER, ADD_FRIEND, CREATE_G, INVITE, SEND, QUERY_MEMBER, LG_OK, \
-    REG_OK, INITIALIZE, LG_FAIL, REG_FAIL, STATUS_ADD_FRIEND, STATUS_CREATE_G, ADD_TO_G, G_MEMBER, PASS, KICK\
+MessageType=[LOGIN, REGISTER, ADD_FRIEND, CREATE_G, INVITE, SEND, QUERY_MEMBER, LG_OK, 
+    REG_OK, INITIALIZE, LG_FAIL, REG_FAIL, STATUS_ADD_FRIEND, STATUS_CREATE_G, ADD_TO_G, G_MEMBER, PASS, KICK,\
     GENERAL_ERROR]
 
 def _get_msg_type_by_value(value):
@@ -152,14 +152,11 @@ def encode_list(data):
         b += encode_any_type(i)
     return b
 def encode_bytes(data):
-    print("encode byte")
-    i = io.BytesIO(data)
-    img = Image.open(i)
-    img.show()
     return data
 
 
 def encode(msg_type, msg_body={}):
+    assert(msg_type in MessageType)
     msg_body_to_bytes = encode_dict(msg_body)
     return struct.pack('!L', msg_type)+ msg_body_to_bytes
 
