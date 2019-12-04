@@ -13,78 +13,77 @@ from common.utils import long_to_bytes, Buffer
     `msg_body`: 消息体, 一定要是个`dict`，默认值是{}
     `data`：需要解码的bytes数据
     `msg_type`: 
-        LOGIN 登入，  username password
-        REGISTER 注册， username password
-        ADD_FRIEND 发起聊天， from_id, to_id
-        CREATE_G 创建群， group_name, number,[username, username...]
-        INVITE 邀请 group_id, username
-        SEND 发送消息 type target_id message:{type, data}
-        QUERY_MEMBER 查询群聊用户 group_id
-        LG_OK = 200 user_id, username
-        REG_OK = 201 # user_id, username
-        INITIALIZE = 202 # {friends:[{username, user_id}], groups[{group_name, group_id}], msg:[{}]}
-        LG_FAIL = 400 # error_code
-        REG_FAIL = 401  # error_code
-        STATUS_ADD_FRIEND = 300 # status
-        STATUS_CREATE_G = 301   # group_id, group_name
-        ADD_TO_G = 302  # group_id, group_name
-        G_MEMBER = 303  # group_id, number, [username, username, username ...]
-        PASS = 100  # type, time, from_id, from_name, target_id, target_name, msg:{type, data} 
-        KICK = 500 {}
-        GENERAL_ERROR = 501 # error_msg
+        LOGIN 登入，  [username,password]
+        REGISTER 注册， [username,password]
+        ADD_FRIEND 发起聊天，  (str)username #朋友的用户名
+        CREATE_G 创建群， {group_name, [username, username...] }
+        INVITE 邀请 [group_id, username]
+        SEND 发送消息 {type, target_id,  message:{type, data}}
+        QUERY_MEMBER 查询群聊用户 (int)group_id
+        LG_OK = 200 [user_id, username]
+        REG_OK = 201 # [user_id, username]
+        INITIALIZE = 202 # {friends:[username, user_id], groups[group_name, group_id], msg:[{}]}
+        LG_FAIL = 400 # (int)error_code
+        REG_FAIL = 401  # (int)error_code
+        STATUS_ADD_FRIEND = 300 # [bool, str]
+        NEW_FRIEND = 301 [userid, username]
+        STATUS_CREATE_G = 302   # [group_id, group_name]
+        ADD_TO_G = 303  # [group_id, group_name]
+        G_MEMBER = 304  # [group_id, [username, username, username ...] ]
+        PASS = 100  # {type, time, from_id, from_name, target_id, target_name, msg:{type, data}} 
+        KICK = 500 
+        GENERAL_ERROR = 501 # str
 
 '''
 
 
 LOGIN = 1
-# username, password
+
 REGISTER = 2
-#username, password
+
 ADD_FRIEND = 3
-# from_id, to_id
+
 CREATE_G = 4
-# group_name, number, [username, username, username, username...] (number至少为1，列表里至少有发起者)
 INVITE = 5
 # group_id, username
 SEND = 6
-# type, target_id, message:{type, data}
+
 QUERY_MEMBER = 7
-# group_id
+
 
 #
 # server
 #
 LG_OK = 200
-# user_id, username
+
 REG_OK = 201
-# user_id, username
+
 INITIALIZE = 202
-# {friends:[{username, user_id}], groups[{group_name, group_id}], msg:[{}]}
+
 
 LG_FAIL = 400
-# error_code
+
 REG_FAIL = 401
-# error_code
+
 
 STATUS_ADD_FRIEND = 300
-# status
-STATUS_CREATE_G = 301
-# group_id, group_name
-ADD_TO_G = 302
-# group_id, group_name
-G_MEMBER = 303
-# group_id, number, [username, username, username ...]
+
+NEW_FRIEND = 301
+STATUS_CREATE_G = 302
+
+ADD_TO_G = 303
+
+G_MEMBER = 304
 
 PASS = 100
-# type, time, from_id, from_name, target_id, target_name, msg:{type, data} 
 
 KICK = 500
 GENERAL_ERROR = 501
-# error_msg
+
 
 MessageType=[LOGIN, REGISTER, ADD_FRIEND, CREATE_G, INVITE, SEND, QUERY_MEMBER, LG_OK, 
-    REG_OK, INITIALIZE, LG_FAIL, REG_FAIL, STATUS_ADD_FRIEND, STATUS_CREATE_G, ADD_TO_G, G_MEMBER, PASS, KICK,\
-    GENERAL_ERROR]
+    REG_OK, INITIALIZE, LG_FAIL, REG_FAIL, STATUS_ADD_FRIEND, NEW_FRIEND, STATUS_CREATE_G, ADD_TO_G, G_MEMBER,\
+    PASS, KICK, GENERAL_ERROR]
 
 def _get_msg_type_by_value(value):
     pass
@@ -157,7 +156,7 @@ def encode_bytes(data):
 
 def encode(msg_type, msg_body={}):
     assert(msg_type in MessageType)
-    msg_body_to_bytes = encode_dict(msg_body)
+    msg_body_to_bytes = encode_any_type(msg_body)
     return struct.pack('!L', msg_type)+ msg_body_to_bytes
 
 
@@ -204,7 +203,9 @@ def decode(data):
     msg_type = int.from_bytes(buffer.read(4),'big')
     print("msg_type: %d" % msg_type)
     ret['msg_type'] = msg_type
-    ret['msg_body'] = decode_dict(buffer.read_all())
+    t = buffer.read(1)[0]
+    buffer.read(4)
+    ret['msg_body'] = decode_any_type(buffer.read_all(),t)
     return ret
 TYPE_TO_ENCODE_FUNCTION = {
     'int': encode_int,
