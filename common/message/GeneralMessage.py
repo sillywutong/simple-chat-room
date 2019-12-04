@@ -1,10 +1,4 @@
-import struct
-from PIL import Image
-import base64
-import io
-from common.utils import long_to_bytes, Buffer
-
-'''
+"""
  General Message: 
     usage:
         GeneralMessage.encode(msg_type=GeneralMessage.LOGIN, msg_body)
@@ -14,9 +8,10 @@ from common.utils import long_to_bytes, Buffer
     `data`：需要解码的bytes数据
     `msg_type`: 
         LOGIN 登入，  [username,password]
+        LOGOUT 登出, user_id
         REGISTER 注册， [username,password]
         ADD_FRIEND 发起聊天，  (str)username #朋友的用户名
-        CREATE_G 创建群， {group_name, [username, username...] }
+        CREATE_G 创建群， [group_name, [username, username...] ]
         INVITE 邀请 [group_id, username]
         SEND 发送消息 {type, target_id,  message:{type, data}}
         QUERY_MEMBER 查询群聊用户 (int)group_id
@@ -27,14 +22,21 @@ from common.utils import long_to_bytes, Buffer
         REG_FAIL = 401  # (int)error_code
         STATUS_ADD_FRIEND = 300 # [bool, str]
         NEW_FRIEND = 301 [userid, username]
-        STATUS_CREATE_G = 302   # [group_id, group_name]
+        STATUS_CREATE_G = 302   # [bool, str]
         ADD_TO_G = 303  # [group_id, group_name]
         G_MEMBER = 304  # [group_id, [username, username, username ...] ]
-        PASS = 100  # {type, time, from_id, from_name, target_id, target_name, msg:{type, data}} 
+        PASS = 100  # {type, time, from_id, from_name, target_id, msg:{type, data}} 
         KICK = 500 
         GENERAL_ERROR = 501 # str
 
-'''
+"""
+
+import struct
+from PIL import Image
+import base64
+import io
+from common.utils import long_to_bytes, Buffer
+
 
 
 LOGIN = 1
@@ -50,7 +52,7 @@ SEND = 6
 
 QUERY_MEMBER = 7
 
-
+LOGOUT = 10
 #
 # server
 #
@@ -81,7 +83,7 @@ KICK = 500
 GENERAL_ERROR = 501
 
 
-MessageType=[LOGIN, REGISTER, ADD_FRIEND, CREATE_G, INVITE, SEND, QUERY_MEMBER, LG_OK, 
+MessageType=[LOGIN, LOGOUT, REGISTER, ADD_FRIEND, CREATE_G, INVITE, SEND, QUERY_MEMBER, LG_OK, 
     REG_OK, INITIALIZE, LG_FAIL, REG_FAIL, STATUS_ADD_FRIEND, NEW_FRIEND, STATUS_CREATE_G, ADD_TO_G, G_MEMBER,\
     PASS, KICK, GENERAL_ERROR]
 

@@ -3,15 +3,17 @@ from common.utils import md5
 from server import database
 from common.message import GeneralMessage
 def run(session, parameters):
+    print(" user login.")
     username = parameters[0]
     password = parameters[1]
-    cur = database.get_cursur()
-    rows = cur.execute('SELECT * FROM users WHERE username=?',(username)).fetchall()
+    cur = database.get_cursor()
+    rows = cur.execute('SELECT * FROM users WHERE username=?',[username]).fetchall()
 
     if len(rows) == 0:
         # 用户不存在
+        print("用户不存在，服务端发送：")
         session.send(GeneralMessage.LG_FAIL, 0)
-    else if rows[0][2]!=md5(password):
+    elif rows[0][2]!=md5(password):
         # 密码错误
         session.send(GeneralMessage.LG_FAIL, 1)
     else:

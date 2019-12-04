@@ -16,10 +16,10 @@ class Session:
         self.user_id = None
 
     def send(self, msg_type, msg_body={}):
-        '''
+        """
             original app message packing to layer 1 and send.
             msg_body is a dict.
-        '''
+        """
         nonce = get_random_bytes(12)
         cipher = AES.new(key=self.session_key, nonce=nonce, mode=AES.MODE_GCM)
         data_to_encrypt = GeneralMessage.encode(msg_type, msg_body) # to do, will serialize body, add len(body), serialize msg_type, return bytes
@@ -37,10 +37,10 @@ class Session:
         # struct.pack 将length_of_message按前面的格式字符串打包成字节串，L表示long(4字节)，！表示大端
 
     def get_message(self, data):
-        '''
+        """
             recv a complete package of level 1, pass the whole passage as parameter `data` \
                 and process it.
-        '''
+        """
         # length of message, padding, nounce, tag, message
         padding = struct.unpack('!B',data[0:1])[0]
         nonce = data[1:1+12]

@@ -13,30 +13,31 @@
 
 | MSG TYPE | MSG BODY(全部都是dict，dict里面可嵌套list) |
 | -------- | ------------------------------------------ |
-| 4 bytes  | body length ，键长-键-值类型-值长-值       |
+| 4 bytes  | 值类型-值长-值                             |
 
 消息类型总共有：(具体格式和类型编号看`GeneralMessage.py`)
 
-1. 登录：{username:  , password:  }
-2. 注册: {username: , password: }
-3. 加好友（发起私聊）{from: , to:  }(无需带上时间，只是把两个人的关系放进数据库)
-4. 发起群聊: {group_name:,   number:      ，['username1',   'username2',   'username3'...  ]    } 
-5. 邀请用户进群聊：{ groupid:      username:    }
+1. 登录：[username:  , password:  ]
+2. 注册: [username: , password]
+3. 加好友（发起私聊）str(username)(无需带上时间，只是把两个人的关系放进数据库)
+4. 发起群聊: [group_name:,   ['username1',   'username2',   'username3'...  ]    ]
+5. 邀请用户进群聊：[ groupid:      username:    ]
 6. 聊天消息:{ type :  (0,1表示私聊和群聊)  ,  target_id:  , message：{ type:（0，1表示文字或图片) ,data: } }
-7. （查询群内成员，隐式发送） ：{ group_id: }
+7. （查询群内成员，隐式发送） ：[group_id]
 8. 
-9. 服务器响应登录成功：{ user_id: , username: }
-10. 登录成功后服务器发送用户好友列表和群组列表（用于初始化窗口的，也可以读取本地聊天记录，但本地读取文件应该比较慢？,以及未读消息{‘friends': [{'username':,'user_id'], 'groups':[{'group_name': ,'group_id': }], 'msg':[按type18发送 ]}
-11. 服务器响应登录失败: {errorcode}
+9. 服务器响应登录成功：[user_id: , username: ]
+10. 登录成功后服务器发送用户好友列表和群组列表（用于初始化窗口的，也可以读取本地聊天记录，但本地读取文件应该比较慢？,以及未读消息{‘friends': [[username,user_id]], 'groups':[[group_name,group_id]], 'msg':[按type18发送 ]}
+11. 服务器响应登录失败: errorcode
 12. 服务器响应注册成功: {user_id: , username: }
-13. 服务器响应注册失败：{errorcode}
-14. 服务器响应发起私聊：{status: } 0表示已经发起过聊天，直接打开以前的窗口，不需要加到数据库里；1 表示是新的好友，开启一个新的窗口
-15. 服务器响应发起群聊：{ group id: ，group_name: }
-16. 被添加进一个新群聊： {group id: , group_name: }   收到之后会发送一条查询群内成员的报文。
-17. 返回群内成员：{group id: ,number: ,['username', 'username', 'username' ,.....]
+13. 服务器响应注册失败：errorcode
+14. 服务器响应发起私聊：[status, information ] false表示已经发起过聊天，直接打开以前的窗口，不需要加到数据库里；1 表示是新的好友，开启一个新的窗口
+15. 服务器响应发起群聊： [group id: ，group_name]
+16. 被添加进一个新群聊： [group id , group_name ]   收到之后会发送一条查询群内成员的报文。
+17. 返回群内成员：[group id , ['username', 'username', 'username' ,.....] ]
 18. 服务器转发聊天消息： { type:, time: , sender_id:, sender_name: , target_id:, target_name: , message: {type :, data:}}    以这个格式存到数据库中，也以这个格式转发给消息接收者和消息发送者，双方都会以这个格式存进本地聊天记录文件(.json)
-19. 重复登录踢出 ：{} (body length=0)
-20. 错误消息： {data:'sdfjskdjfkjskdjfksjdkfjk '}
+19. 重复登录踢出 ：{} 
+20. 错误消息： str
+21. 新的好友请求聊天： [user_id, user_name] 不在线不发，在线才发（打开新窗口）
 
 
 
