@@ -1,29 +1,29 @@
-'''
+"""
 查询数据库
-'''
+"""
 import sqlite3
 
-conn = sqlite3.connect('../database.db', isolation_level=None)  #每一次修改数据库都是立即写入，速度慢，但是保证不出现并发错误；想加快速度可以用#BEGIN TRANSACTION COMMIT
+conn = sqlite3.connect('server/database.db', isolation_level=None)  #每一次修改数据库都是立即写入，速度慢，但是保证不出现并发错误；想加快速度可以用#BEGIN TRANSACTION COMMIT
 
 def get_cursor():
     return conn.cursor()
 
 def get_user_by_id(user_id):
-    '''
+    """
         根据给出的user id， 从数据库中查询user， 返回一个字典类型，包含字段：
         user_id: id,
         username: username,
         password: password,
-    '''
+    """
     return {}
 def get_user_by_name(username):
-    '''
+    """
         返回：
         {
             user_id:
             username
         }
-    '''
+    """
     return {}
 
 def get_friend(user_id):
@@ -54,7 +54,7 @@ def get_group_members_id(group_id):
     return []
 def get_group_members_info(group_id):
     '''
-        根据群组id，获取群内所有用户的信息，返回字典数组{user_id, username}
+        根据群组id，获取群内所有用户的信息，返回二维数组[[user_id, username]]
     '''
     return [{}]
 
@@ -69,7 +69,7 @@ def get_offline_messages(user_id):
             from_id,
             from_name,
             target_id,
-            target_name, #没必要？
+            # target_name, 
             message:{type, data}
 
         }]
@@ -90,10 +90,16 @@ def add_chat_history(type, user_id, target_id, msg):
 def delete_chat_history(history_id):
     return
 
-def add_user(username, password, nickname):
+def add_user(username, password):
+    '''
+    插入数据库后，返回id（id在数据库里按递增顺序存放
+    '''
     return
-
-
+def new_group(group_name, members):
+    """
+        给出群名和成员id，新建一个群, 成功返回群id，保证members里面的id都是存在的。
+    """
+    return
 
 
 
