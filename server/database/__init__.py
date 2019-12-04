@@ -8,12 +8,21 @@ conn = sqlite3.connect('../database.db', isolation_level=None)  #每一次修改
 def get_cursor():
     return conn.cursor()
 
-def get_user(user_id):
+def get_user_by_id(user_id):
     '''
         根据给出的user id， 从数据库中查询user， 返回一个字典类型，包含字段：
         user_id: id,
         username: username,
         password: password,
+    '''
+    return {}
+def get_user_by_name(username):
+    '''
+        返回：
+        {
+            user_id:
+            username
+        }
     '''
     return {}
 

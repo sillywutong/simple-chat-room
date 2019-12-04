@@ -17,3 +17,5 @@ def run():
     length = client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body={'nothing':0,'something':[1,2,3,'string!','中文',{'another dict': 12345, 'username':'rarecu'}],'image': 123})
     print("length to send: %d" % length)
     client_global.session.send(msg_type=2, msg_body={})
+    client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body=['rarecu', '1278ghdfsdf88'])
+    client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body='sdfhsjdhjfshdjfhjs')
