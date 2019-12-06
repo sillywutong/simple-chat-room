@@ -23,7 +23,9 @@ def run():
     while(1):
         rlist, wlist, xlist = select.select(list(map(lambda x: x.socket, sessions))+[sock], [],[])
         
+        print(rlist)
         for s in rlist:
+            print("s", s)
             if s == sock : # new connection
                 new_sess = server_new_session(s)
                 socket_to_sessions[new_sess.socket] = new_sess #从套接字快速找到会话通道; 自定义的通道类直接保存了socket
@@ -38,14 +40,17 @@ def run():
                 try:
                     length_bytes = sess.socket.recv(4)
                 except ConnectionError:
-                    print("there are some problems with connection to the server, please check your network.")
+                    sess.socket.close()
+                    remove_session(sess)
+                    print("one client leave")
+                    continue
                 
                 if len(length_bytes) == 4:
                     bytes_buffer[sess] = bytes()   # struct.unpack的返回结果为元组，即使只包含一个条目
                     # msg length + padding 1+ nonce 12 + tag 16 + msg
                     to_receive[sess] = struct.unpack('!L', length_bytes)[0] + 1 + 12 + 16
-                        
-            bytes_buffer[sess] += sess.socket.recv(to_receive[sess] - received[sess]) 
+                         
+            bytes_buffer[sess] += sess.socket.recv(to_receive[sess] - received[sess])
             #print("length of buffer %d "  % len(bytes_buffer[sess]))
             received[sess] = len(bytes_buffer[sess])
 
