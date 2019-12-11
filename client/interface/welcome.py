@@ -20,8 +20,8 @@ class WelcomePage(tk.Frame):
 
         self.headline.pack(anchor=tk.CENTER, padx=30, pady=10)
 
-        self.dialogbox = tk.Text(self, height=10, width=40)
-        self.dialogbox.configure(bg='#fafaf2')
+        self.dialogbox = tk.Text(self, height=7, width=40)
+        self.dialogbox.configure(bg='#ffffff', font=('Microsoft Yahei UI',"10"))
         self.dialogbox.pack(anchor=tk.CENTER, pady=10, padx=40)
         
         connection = True

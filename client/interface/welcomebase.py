@@ -13,7 +13,7 @@ class WelcomeWindow(tk.Toplevel):
         super().__init__(master=root, takefocus=True)
         self.root = root
         self.geometry('400x300')
-        self.configure(bg="#e3e3dc")
+        self.configure(bg="#DADFE6")
 
         self.welcomeframe = WelcomePage(self)
     

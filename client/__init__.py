@@ -14,30 +14,27 @@ def run():
     root.title("chatbot")
     client_global.tkroot = root
     
-    try:
-        WelcomeWindow(client_global.tkroot)
-    except ConnectionError:
-        print('Server has been closed.')
-        client_global.tkroot.destroy()
-        exit(1)
+    root.withdraw()
+    WelcomeWindow(client_global.tkroot)
+    if client_global.session:
     #LoginWindow(login)
 
-    #_thread.start_new_thread(main_listener_thread,(client_global.session, client_global.tkroot))
-    t = threading.Thread(target = main_listener_thread, args=(client_global.session, client_global.tkroot), daemon=True)
-    t.start()
-    #print("threading start.")
-    #with open('test.png','rb') as imag_file:
-        #img_bytes = imag_file.read()
-        #img_bytes=bytes(img_bytes)
-    
-    #print("send login 1:")
-    #client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body=['rarecu', '1278ghdfsdf88', img_bytes])
-    #print("send login 2:")
-    #client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body=['sdshdj', 'dshdjfhjsdhfj'])
-    root.withdraw()
-    root.mainloop()
-  
-    try: 
-        root.destroy()
-    except tk.TclError:
-        pass
+        #_thread.start_new_thread(main_listener_thread,(client_global.session, client_global.tkroot))
+        t = threading.Thread(target = main_listener_thread, args=(client_global.session, client_global.tkroot), daemon=True)
+        t.start()
+        #print("threading start.")
+        #with open('test.png','rb') as imag_file:
+            #img_bytes = imag_file.read()
+            #img_bytes=bytes(img_bytes)
+
+        #print("send login 1:")
+        #client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body=['rarecu', '1278ghdfsdf88', img_bytes])
+        #print("send login 2:")
+        #client_global.session.send(msg_type=GeneralMessage.LOGIN, msg_body=['sdshdj', 'dshdjfhjsdhfj'])
+        #root.withdraw()
+        root.mainloop()
+
+        try: 
+            root.destroy()
+        except tk.TclError:
+            pass

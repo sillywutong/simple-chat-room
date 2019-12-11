@@ -14,8 +14,8 @@ class LoginWindow(tk.Frame):
 
         self.configure(bg=self.parent.cget('bg'))
         #self.configure(bg="#000000")
-        self.usernamelabel = tk.Label(master=self, text="Username:", bg="#e3e3dc")
-        self.passwordlabel = tk.Label(master=self, text="Password:", bg="#e3e3dc")
+        self.usernamelabel = tk.Label(master=self, text="Username:", bg=self.cget('bg'))
+        self.passwordlabel = tk.Label(master=self, text="Password:", bg=self.cget('bg'))
 
         self.username = tk.Entry(self)
         self.password = tk.Entry(self, show="*")
@@ -23,15 +23,18 @@ class LoginWindow(tk.Frame):
         buttonFrame = tk.Frame(self)
         buttonFrame.configure(bg=self.cget('bg'))
 
-        self.loginbtn = ttk.Button(master=buttonFrame, text="Log in", command=self.login_clicked)
-        self.registerbtn = ttk.Button(master=buttonFrame, text="Cancel", command=self.master.cancel_login)
+        btnstyle = ttk.Style()
+        btnstyle.map("C.TButton", foreground=[('pressed', '#536580'), ('active', '#000000')],background=[('pressed', '!disabled', '#F2F8FF'), ('active', '#C2C6CC')])
+        
+        self.loginbtn = ttk.Button(master=buttonFrame, text="Log in", command=self.login_clicked, style="C.TButton")
+        self.registerbtn = ttk.Button(master=buttonFrame, text="Cancel", command=self.master.cancel_login, style="C.TButton")
 
-        self.username.grid(row=0, column=1, pady=6)
+        self.username.grid(row=0, column=1, pady=15)
         self.usernamelabel.grid(row=0, padx=6, sticky=tk.W)    
-        self.password.grid(row=1, column=1, pady=6)
+        self.password.grid(row=1, column=1, pady=15)
         self.passwordlabel.grid(row=1, padx=6, sticky=tk.W)
 
-        buttonFrame.grid(row=3, rowspan=2, columnspan=2, pady=10)
+        buttonFrame.grid(row=3, rowspan=2, columnspan=2, pady=15)
         self.loginbtn.grid(row=0, column=0, padx=10)
         self.registerbtn.grid(row=0, column=1, padx=10)
         self.pack(anchor=tk.CENTER, padx=30, pady=30, expand=True)
