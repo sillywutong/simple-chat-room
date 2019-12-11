@@ -69,7 +69,7 @@ def run():
                 received[sess] = 0
                 to_receive[sess] = 0
                 data = sess.get_message(bytes_buffer[sess])
-                #print(data)
+                print(data)
                 print("to handler...")
                 handle_event(sess, data['msg_type'], data['msg_body'])
                 bytes_buffer[sess] = bytes()

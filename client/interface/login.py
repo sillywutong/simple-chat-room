@@ -5,6 +5,7 @@ from client import client_global
 from common.message import GeneralMessage
 from client.interface.register import RegisterForm
 from client.listener import add_listener, remove_listener
+from client.interface.contactlist import ContactList
 class LoginWindow(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -64,13 +65,15 @@ class LoginWindow(tk.Frame):
             username = msg_body[1]
             client_global.current_user['id'] = user_id
             client_global.current_user['username'] = username
-
+            print("current id: %d" %user_id)
             # TODO: open the main window.
             # close the login window.
             # never want to receive message from server.
             print("close login window and remove listener")
             remove_listener(self.handle_response)
             self.master.destroy()
+            contactwnd = tk.Toplevel(client_global.tkroot, takefocus=True)
+            ContactList(contactwnd)
 
     def cancel_clicked(self):
         '''

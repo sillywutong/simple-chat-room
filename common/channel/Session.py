@@ -20,6 +20,8 @@ class Session:
             original app message packing to layer 1 and send.
             msg_body is a dict.
         """
+        print("sending: ")
+        print({'msg_type': msg_type, 'msg_body':msg_body})
         nonce = get_random_bytes(12)
         cipher = AES.new(key=self.session_key, nonce=nonce, mode=AES.MODE_GCM)
         data_to_encrypt = GeneralMessage.encode(msg_type, msg_body) # to do, will serialize body, add len(body), serialize msg_type, return bytes
@@ -27,7 +29,7 @@ class Session:
         padding = math.ceil(length / 16) * 16 - length
         for i in range(padding):
             data_to_encrypt += b'\0'
-        print("length of data to encrypt: %d", len(data_to_encrypt))
+
         encrypted_data, tag = cipher.encrypt_and_digest(data_to_encrypt) # MAC tag =16 bytes
         # length of message, padding, nounce, tag, message
         length_of_message = len(encrypted_data)

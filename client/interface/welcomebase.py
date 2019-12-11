@@ -9,7 +9,7 @@ from client.interface.welcome import WelcomePage
 from client.listener import *
 
 class WelcomeWindow(tk.Toplevel):
-    def __init__(self, root):
+    def __init__(self, root=None):
         super().__init__(master=root, takefocus=True)
         self.root = root
         self.geometry('400x300')

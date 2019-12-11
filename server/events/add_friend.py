@@ -10,13 +10,14 @@ def run(session, parameters):
     """
     friend_name = parameters
     c = database.get_cursor()
-    friend = c.execute('SELECT id FROM users WHERE username=?', friend_name).fetchall()
+    friend = c.execute('SELECT id FROM users WHERE username=?', [friend_name]).fetchall()
     if len(friend) != 0:
         # 该用户存在，先看两人是不是已经是朋友
         if database.is_friend(session.user_id, friend[0][0]):
             session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '']) #在旧的聊天窗口打开
         elif friend[0][0] == session.user_id:
             session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '不能与自己发起聊天'])
+            return
         else:
             database.add_friend(session.user_id, friend[0][0])
             session.send(GeneralMessage.STATUS_ADD_FRIEND, [True, ''])
@@ -24,6 +25,6 @@ def run(session, parameters):
         session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '用户名不存在'] )
     
     c = database.get_cursor()
-    uname = c.execute('SELECT username FROM users WHERE id=?', session.user_id).fetchone()[0]
+    uname = c.execute('SELECT username FROM users WHERE id=?', [session.user_id]).fetchone()[0]
     if friend[0][0] in user_id_to_session:
         user_id_to_session[friend[0][0]].send(GeneralMessage.NEW_FRIEND, [session.user_id, uname])

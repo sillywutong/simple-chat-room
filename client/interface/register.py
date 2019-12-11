@@ -4,6 +4,8 @@ from tkinter import messagebox
 from client import client_global
 from common.message import GeneralMessage
 from client.listener import add_listener, remove_listener
+import re
+
 class RegisterForm(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
@@ -53,6 +55,8 @@ class RegisterForm(tk.Frame):
             tk.messagebox.showinfo(message="The length of password should at least be 8.")
         elif password1 != password2:
             tk.messagebox.showinfo(message="Passwords entered twice are inconsistent, please check again.")
+        elif not re.match(r'^[a-zA-Z0-9_-]{4,16}$', "abwc"):
+            tk.messagebox.showinfo(message="username should only include numbers, letters and '_'")
         else:
             client_global.session.send(GeneralMessage.REGISTER, [username, password1])
     def cancel_clicked(self):
