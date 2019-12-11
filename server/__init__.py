@@ -38,11 +38,18 @@ def run():
             sess = socket_to_sessions[s]    #旧的会话
             if received[sess] == 0 and to_receive[sess] == 0: #接收一个新的包
                 try:
-                    length_bytes = sess.socket.recv(4)
+                    length_bytes = sess.socket.recv(4, socket.MSG_WAITALL)
                 except ConnectionError:
                     sess.socket.close()
                     remove_session(sess)
                     print("one client leave")
+                    continue
+                if length_bytes == '' or len(length_bytes)!=4:
+                    print("client broke down.")
+                    sess.socket.close()
+                    remove_session(sess)
+                    print(len(length_bytes))
+                    print(length_bytes)
                     continue
                 
                 if len(length_bytes) == 4:
@@ -51,6 +58,9 @@ def run():
                     to_receive[sess] = struct.unpack('!L', length_bytes)[0] + 1 + 12 + 16
                          
             bytes_buffer[sess] += sess.socket.recv(to_receive[sess] - received[sess])
+            print("to_receive: %d" % to_receive[sess])
+            print("length of to receivesize: %d" % (to_receive[sess] - received[sess]))
+            print("length of received! %d" % len(bytes_buffer[sess]))
             #print("length of buffer %d "  % len(bytes_buffer[sess]))
             received[sess] = len(bytes_buffer[sess])
 
@@ -59,7 +69,7 @@ def run():
                 received[sess] = 0
                 to_receive[sess] = 0
                 data = sess.get_message(bytes_buffer[sess])
-                print(data)
+                #print(data)
                 print("to handler...")
                 handle_event(sess, data['msg_type'], data['msg_body'])
                 bytes_buffer[sess] = bytes()
