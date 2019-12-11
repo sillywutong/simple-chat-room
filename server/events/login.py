@@ -46,7 +46,7 @@ def run(session, parameters):
         initialize_data['msg']=msg
 
         session.send(GeneralMessage.INITIALIZE, initialize_data)
-
+        print('login done.')
 
             
 

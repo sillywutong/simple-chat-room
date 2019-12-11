@@ -13,11 +13,11 @@ def run(session, parameters):
     mid = []
     for mname in members:
         c = database.get_cursor()
-        r = c.execute('SELECT id FROM users WHERE username=?', mname)
-        if len(r)==0:
+        r = c.execute('SELECT id FROM users WHERE username=?', [mname]).fetchone()
+        if not r:
             # 用户名不存在
             session.send(GeneralMessage.STATUS_CREATE_G, [False,'用户名 %s 不存在'%mname])
-            break
+            return
         else:
             mid.append(r[0])
     

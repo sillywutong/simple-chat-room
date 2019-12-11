@@ -7,7 +7,7 @@ from common.message import GeneralMessage
 import struct
 
 specific_listener=[]
-chat_window_listener=[] #{target_type, target_id, target_name, listener}
+chat_window_listener=[{},{}]   #[0]私聊，[1]群聊，'target_id'
 
 def main_listener_thread(session, tk_root):
     bytes_buffer = bytes()  #每一个会话接收包，但可能不是一次性接收到完整的包
@@ -73,18 +73,11 @@ def remove_listener(listener):
     print("listener removed.")
     if listener in specific_listener:
         specific_listener.remove(listener)
-def add_chat_window(target_type, target_id, target_name, listener):
-    dic={'target_type': target_type,
-         'target_id': target_id, 
-         'target_name': target_name,
-         'listener': listener}
-    chat_window_listener.append(dic)
-def remove_chat_window(target_type, target_id, target_name, listner):
-    dic={'target_type': target_type,
-         'target_id': target_id, 
-         'target_name': target_name,
-         'listener': listener}
-    chat_window_listener.remove(dic)
+def add_chat_window(target_type, target_id):
+    chat_window_listener[target_type][target_id]=listener
+def remove_chat_window(target_type, target_id):
+    if target_id in chat_window_listener[target_type]:
+        del chat_window_listener[target_type][target_id]
 
 
 

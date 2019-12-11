@@ -28,19 +28,41 @@ def get_user_by_name(username):
 
 def get_friend(user_id):
     '''
-        根据给出的user id, 查询所有好友, 返回好友user id, username, 是个列表[{user_id, user_name},{user_id, user_name},...]
+        根据给出的user id, 查询所有好友, 返回好友user id, username, 是个列表[[user_id, user_name],[user_id, user_name],...]
     '''
-    return 0
+    friends=[]
+    c = get_cursor()
+    rows = c.execute('SELECT user_id1, user_id2 FROM friends WHERE user_id1=? or user_id2=?', [user_id, user_id]).fetchall()
+    for t in rows:
+        if t[0]==user_id:
+            c2=get_cursor()
+            fname = c.execute('SELECT username FROM users WHERE id=?',[t[1]]).fetchone()[0]
+            friends.append([t[1],fname])
+        else:
+            c2=get_cursor()
+            fname = c.execute('SELECT username FROM users WHERE id=?',[t[0]]).fetchone()[0]
+            friends.append([t[0],fname])
+    return friends
 
 def is_friend(user_id1, user_id2):
     '''
         判断user_id2 是不是user_id1的好友
     '''
+    c=get_cursor()
+    r = c.execute('SELECT * FROM friends WHERE (user_id1=? and user_id2=?) or (user_id1=? and user_id2=?)', [user_id1,user_id2, user_id2, user_id1]).fetchall()
+    if len(r):
+        return True
     return False
 def get_group(user_id):
     '''
-    查询用户加入了哪些群，返回[{group_id, group_name},{group_id, group_name},...]
+    查询用户加入了哪些群，返回[[group_id, group_name],[group_id, group_name],...]
     '''
+    groups=[]
+    c=get_cursor()
+    rows = c.execute('SELECT X.group_id, group_name From group_member as X, groups as Y WHERE user_id=? and X.group_id=Y.group_id',[user_id] ).fetchall()
+    for t in rows:
+        groups.append([t[0],t[1]])
+    return groups
 def get_group_name(group_id):
     '''
      返回字符串
@@ -77,7 +99,9 @@ def get_offline_messages(user_id):
     return {}
 
 def add_friend(from_id, to_id):
-    return
+    c=get_cursor()
+    c.execute('INSERT INTO friends (user_id1, user_id2) values(?,?)',[from_id, to_id])
+    return True
 
 def add_to_group(group_id, user_id):
     return
@@ -94,12 +118,22 @@ def add_user(username, password):
     '''
     插入数据库后，返回id（id在数据库里按递增顺序存放
     '''
-    return
+    c = get_cursor()
+    c.execute('INSERT INTO users (username, password) values (?,?)', [username, password])
+
+    return c.lastrowid
 def new_group(group_name, members):
     """
         给出群名和成员id，新建一个群, 成功返回群id，保证members里面的id都是存在的。
     """
-    return
+    c=get_cursor()
+    c.execute("INSERT INTO groups (group_name) values (?)", [group_name])
+    gid = c.lastrowid
+    c= get_cursor()
+    for mid in members:
+        c.execute('INSERT INTO group_member (group_id, user_id) values (?,?)', [gid, mid])
+    
+    return gid
 
 
 

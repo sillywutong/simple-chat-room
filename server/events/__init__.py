@@ -10,7 +10,7 @@ from common.message import GeneralMessage
 
 TYPE_TO_EVENT_FUNCTION={
     GeneralMessage.LOGIN: login,
-    GeneralMessage.ADD_TO_G: add_friend,
+    GeneralMessage.ADD_FRIEND: add_friend,
     GeneralMessage.INVITE: invite_to_group,
     GeneralMessage.CREATE_G: new_group,
     GeneralMessage.REGISTER: register,
