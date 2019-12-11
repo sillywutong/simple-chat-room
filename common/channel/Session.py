@@ -33,7 +33,7 @@ class Session:
         length_of_message = len(encrypted_data)
         print("length of message:")
         print(length_of_message)
-        return self.socket.send(struct.pack('!L', length_of_message) + bytes([padding]) + nonce + tag + encrypted_data)
+        return self.socket.sendall(struct.pack('!L', length_of_message) + bytes([padding]) + nonce + tag + encrypted_data)
         # struct.pack 将length_of_message按前面的格式字符串打包成字节串，L表示long(4字节)，！表示大端
 
     def get_message(self, data):
@@ -62,29 +62,11 @@ class Session:
             decrypted_msg = decrypted_msg[0: -padding]
         print("unpack message ")
         return GeneralMessage.decode(decrypted_msg)
-    def close():
+    def close(self):
         self.socket.close()
 
 
 
-
-
-
-def client_new_session():
-    config = get_config()
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((config['client']['ip'],config['client']['port']))
-
-    s.send(long_to_bytes(crypt.my_secret))
-    print("my secret: %d" % crypt.my_secret)
-    server_secret = s.recv(1024)
-    server_secret = int.from_bytes(server_secret, 'big')
-    print("server key: %d" % server_secret)
-    session_key = crypt.get_shared_secret(server_secret)
-    print("shared key: %d" % int.from_bytes(session_key,'big'))
-    session = Session(s, session_key)
-    print("new session...")
-    return session
     
     
 

@@ -10,7 +10,7 @@ def run(session, parameters):
     username = parameters[0]
     password = parameters[1]
     c = database.get_cursor()
-    r = c.execute('SELECT * FROM users WHERE username=?', username).fetchone()[0]
+    r = c.execute('SELECT * FROM users WHERE username=?', [username]).fetchone()
     if r:
         # 用户名已存在
         session.send(GeneralMessage.REG_FAIL, 0)
