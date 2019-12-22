@@ -1,5 +1,5 @@
 """
- General Message: 
+General Message: 
     usage:
         GeneralMessage.encode(msg_type=GeneralMessage.LOGIN, msg_body)
         GeneralMessage.decode(data)
@@ -15,17 +15,19 @@
         INVITE 邀请 [group_id, username]
         SEND 发送消息 {type, target_id,  message:{type, data}}
         QUERY_MEMBER 查询群聊用户 (int)group_id
-        LG_OK = 200 [user_id, username]
-        REG_OK = 201 # [user_id, username]
+        LG_OK = 200 {username:}
+        REG_OK = 201 # {}
         INITIALIZE = 202 # {friends:[username, user_id], groups[group_name, group_id], msg:[{}]}
         LG_FAIL = 400 # (int)error_code
         REG_FAIL = 401  # (int)error_code
-        STATUS_ADD_FRIEND = 300 # [bool, str]
-        NEW_FRIEND = 301 [userid, username]
-        STATUS_CREATE_G = 302   # [bool, str]
-        ADD_TO_G = 303  # [group_id, group_name]
+        STATUS_ADD_FRIEND = 300 # {success, error, username, user_id}
+        NEW_FRIEND = 301 {username}
+        STATUS_CREATE_G = 302   # {success, error, group_name, group_id, member:[username, user_id]}
+        ADD_TO_G = 303  # {source_username, group_id, group_name, grouup_members[]}
         G_MEMBER = 304  # [group_id, [username, username, username ...] ]
-        PASS = 100  # {type, time, from_id, from_name, target_id, msg:{type, data}} 
+        STATUS_INTIVE = 305 # {success, error, group_id, group_name, group_members[]}
+        NEW_MEMBER = 306 # {source_username, group_id, group_name, target_username}
+        PASS = 100  # {is_private, time, source_username, target_username, type, data} 
         KICK = 500 
         GENERAL_ERROR = 501 # str
 
@@ -36,7 +38,7 @@ from PIL import Image
 import base64
 import io
 from common.utils import long_to_bytes, Buffer
-
+from datetime import datetime
 
 
 LOGIN = 1
@@ -77,6 +79,9 @@ ADD_TO_G = 303
 
 G_MEMBER = 304
 
+STATUS_INVITE = 305
+NEW_MEMBER = 306
+
 PASS = 100
 
 KICK = 500
@@ -96,7 +101,8 @@ TYPE_TO_BYTES = {
     'list':3,
     'dict':4,
     'bool':5,
-    'bytes':6
+    'bytes':6,
+    'datetime': 7
 } 
 
 
@@ -155,6 +161,8 @@ def encode_list(data):
 def encode_bytes(data):
     return data
 
+def encode_datetime(data):
+    return encode_int(int(data.timestamp()))
 
 def encode(msg_type, msg_body={}):
     assert(msg_type in MessageType)
@@ -192,6 +200,9 @@ def decode_bytes(data):
 def decode_bool(data):
     return True if data[0] else False
 
+def decode_datetime(data):
+    return datetime.fromtimestamp(decode_int(data))
+
 def decode_any_type(data, type):
     return TYPE_TO_DECODE_FUNCTION[type](data)
 
@@ -215,7 +226,8 @@ TYPE_TO_ENCODE_FUNCTION = {
     'list': encode_list,
     'dict': encode_dict,
     'bool': encode_bool,
-    'bytes': encode_bytes
+    'bytes': encode_bytes,
+    'datetime': encode_datetime
 }
 TYPE_TO_DECODE_FUNCTION = [
     decode_int, #填充0
@@ -224,7 +236,8 @@ TYPE_TO_DECODE_FUNCTION = [
     decode_list,
     decode_dict,
     decode_bool,
-    decode_bytes
+    decode_bytes,
+    decode_datetime
 ]
 '''
 a = {'key':1, 'ksds':2}
