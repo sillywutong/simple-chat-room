@@ -101,7 +101,7 @@ class ChatWindow(tk.Frame):
     def refresh_user_listbox(self):
         # [id, nickname, online, username]
         self.user_listbox.delete(0, END)
-        self.user_list = client_global.groups[self.contact['group_id']]['group_members']
+        self.user_list = list(client_global.groups[self.contact['group_id']]['group_members'])
         self.user_list.sort(reverse=True)
         for uname in self.user_list:
             self.user_listbox.insert(0, uname)
