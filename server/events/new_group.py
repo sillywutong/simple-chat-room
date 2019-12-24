@@ -8,7 +8,7 @@ def run(session, parameters):
         创建者会受到STATUS_CREATE_G，{success, error, group_id, group_name, members}
         列表中的所有用户会收到ADD_TO_GROUP消息，被加入群聊，格式是{source_username: group_id:, group_name:, group_members: }
     """
-    print('handling NEWGROUP')
+    #print('handling NEWGROUP')
     group_name = parameters[0]
     members = parameters[1]
 

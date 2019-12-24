@@ -20,8 +20,6 @@ class Session:
             original app message packing to layer 1 and send.
             msg_body is a dict.
         """
-        print("sending: ")
-        print({'msg_type': msg_type, 'msg_body':msg_body})
         nonce = get_random_bytes(12)
         cipher = AES.new(key=self.session_key, nonce=nonce, mode=AES.MODE_GCM)
         data_to_encrypt = GeneralMessage.encode(msg_type, msg_body) # to do, will serialize body, add len(body), serialize msg_type, return bytes
@@ -33,8 +31,6 @@ class Session:
         encrypted_data, tag = cipher.encrypt_and_digest(data_to_encrypt) # MAC tag =16 bytes
         # length of message, padding, nounce, tag, message
         length_of_message = len(encrypted_data)
-        print("length of message:")
-        print(length_of_message)
         return self.socket.sendall(struct.pack('!L', length_of_message) + bytes([padding]) + nonce + tag + encrypted_data)
         # struct.pack 将length_of_message按前面的格式字符串打包成字节串，L表示long(4字节)，！表示大端
 
@@ -78,10 +74,7 @@ def server_new_session(sock):
 
     client_secret = conn.recv(1024)
     client_secret = int.from_bytes(client_secret, 'big')
-    print("client secret: %d" % client_secret)
     conn.send(long_to_bytes(crypt.my_secret))
-    print("my secret: %d" % crypt.my_secret)
     session_key = crypt.get_shared_secret(client_secret)
-    print("shared key: %d" % int.from_bytes(session_key,'big'))
     session = Session(conn, session_key)
     return session

@@ -8,9 +8,11 @@ def run(session, parameters):
     # STATUS_ADD_FRIEND: {'success':, 'error':, 'username':}
     如果bool为False， 而str是空字符串，打开旧的聊天窗口。
     """
-    friend = parameters
+    friend_ = parameters
+    friend = database.get_user_by_name(friend_)
     if friend != None:
         # 该用户存在，先看两人是不是已经是朋友
+        friend = friend['username']
         if database.is_friend(session.username, friend):
             session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'username': friend}) #在旧的聊天窗口打开
         elif friend == session.username:
@@ -22,6 +24,6 @@ def run(session, parameters):
             if friend in username_to_session:
                 username_to_session[friend].send(GeneralMessage.NEW_FRIEND, {'username': session.username})
     else:
-        session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'error': '用户名不存在', 'username': friend} )
+        session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'error': '用户名不存在', 'username': friend_} )
     
     

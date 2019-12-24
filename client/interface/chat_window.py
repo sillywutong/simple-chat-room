@@ -12,6 +12,7 @@ import binascii
 from client.listener import add_listener
 from client import client_global
 from common.message import GeneralMessage
+from client.interface.chatform import ChatForm
 
 
 class ChatWindow(tk.Frame):
@@ -19,10 +20,10 @@ class ChatWindow(tk.Frame):
     font_size = 10
     user_list = []
     tag_i = 0
-
     def __init__(self, contact, master=None):
         super().__init__(master)
         self.master = master
+        self.master.child = self
         self.contact = contact
         self.user_listbox = tk.Listbox(self, bg='#EEE')
         add_listener(self.handle_message)
@@ -111,7 +112,7 @@ class ChatWindow(tk.Frame):
         time = data['time'].ctime()
         if data.get('source_username', None):
             self.append_to_chat_box(
-                data['source_username'] + "  " + time + '\n',
+                data['source_username'] + "   " + time + '\n',
                 ('me' if client_global.current_user == data['source_username'] else 'them'))
             # type 0 - 文字消息 1 - 图片消息
             if data['type'] == 0:
@@ -139,7 +140,7 @@ class ChatWindow(tk.Frame):
         selected_user = self.user_list[-index-1]
         if selected_user == client_global.current_user:
             return
-        form = Toplevel(client_global.tkroot, takefocus=True)
+        form = ChatForm(client_global.tkroot, takefocus=True)
         ChatWindow({'is_private': True, 'username': selected_user}, form)
         # pprint(selected_user_id)
         return
@@ -170,6 +171,7 @@ class ChatWindow(tk.Frame):
                                                           ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.JPG", "*.JPEG",
                                                            "*.PNG", "*.GIF"]),
                                                          ("All Files", ["*.*"])])
+        print("so dialog?")
         if filename is None or filename == '':
             return
         with open(filename, "rb") as imageFile:

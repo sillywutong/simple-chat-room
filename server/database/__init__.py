@@ -45,12 +45,8 @@ def is_friend(username1, username2):
         判断username2 是不是username1的好友
     '''
     tups = conn.execute(
-        '''
-        select *
-        from friends
-        where username1 = ? and username2 = ? or username2 = ? and username1 = ? 
-        ''',
-        (username1, username2, username1, username2,)
+        'select *from friends where username1 = ? and username2 = ? or username2 = ? and username1 = ? ',
+        [username1, username2, username1, username2]
     ).fetchall()
     return len(tups) >= 1
 

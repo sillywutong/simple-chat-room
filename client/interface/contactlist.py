@@ -11,6 +11,7 @@ from datetime import datetime
 from client.interface.chat_window import ChatWindow
 from client.interface.group_creater import GroupCreater
 from client.interface.vertical_scrolled_frame import VerticalScrolledFrame
+from client.interface.chatform import ChatForm
 
 class ContactItem(Frame):
     def __init__(self, parent, onclick):
@@ -314,9 +315,8 @@ class ContactList(tk.Frame):
     def contact_item_clicked(self):
         #TODO: 生成新窗口并进行窗口的初始化，将点击的时间作为last_time， 刷新好友列表。
         pass
-
     def on_frame_click(self, e):      
-        form = Toplevel(client_global.tkroot, takefocus=True)
+        form = ChatForm(client_global.tkroot, takefocus=True)
         contact = {'is_private': True, 'username': e.widget.item['username']} \
             if e.widget.item['is_private'] \
             else {'is_private': False, 'group_id': e.widget.item['group_id']}
@@ -338,7 +338,7 @@ class ContactList(tk.Frame):
         selected_user = self.friend_list[-index-1]
         if selected_user == client_global.current_user:
             return
-        form = Toplevel(client_global.tkroot, takefocus=True)
+        form = ChatForm(client_global.tkroot, takefocus=True)
         ChatWindow({'is_private': True, 'username': selected_user}, form)
         # pprint(selected_user_id)
         return

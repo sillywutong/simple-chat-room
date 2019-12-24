@@ -23,9 +23,8 @@ def run():
     while(1):
         rlist, wlist, xlist = select.select(list(map(lambda x: x.socket, sessions))+[sock], [],[])
         
-        print(rlist)
+
         for s in rlist:
-            print("s", s)
             if s == sock : # new connection
                 new_sess = server_new_session(s)
                 socket_to_sessions[new_sess.socket] = new_sess #从套接字快速找到会话通道; 自定义的通道类直接保存了socket
@@ -58,19 +57,13 @@ def run():
                     to_receive[sess] = struct.unpack('!L', length_bytes)[0] + 1 + 12 + 16
                          
             bytes_buffer[sess] += sess.socket.recv(to_receive[sess] - received[sess])
-            print("to_receive: %d" % to_receive[sess])
-            print("length of to receivesize: %d" % (to_receive[sess] - received[sess]))
-            print("length of received! %d" % len(bytes_buffer[sess]))
             #print("length of buffer %d "  % len(bytes_buffer[sess]))
             received[sess] = len(bytes_buffer[sess])
 
             if received[sess] == to_receive[sess] and len(bytes_buffer[sess])!=0:
-                print("receive a package")
                 received[sess] = 0
                 to_receive[sess] = 0
                 data = sess.get_message(bytes_buffer[sess])
-                print(data)
-                print("to handler...")
                 handle_event(sess, data['msg_type'], data['msg_body'])
                 bytes_buffer[sess] = bytes()
 

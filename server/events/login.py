@@ -5,13 +5,10 @@ from server import database
 from common.message import GeneralMessage
 
 def run(session, parameters):
-    print(" user login.")
     username = parameters[0]
     password = parameters[1]
     
     user = database.get_user_by_name(username)
-    print(user)
-    print(username, password)
     if user == None:
         # 用户不存在
         print("用户不存在，服务端发送：")

@@ -124,7 +124,6 @@ def encode_any_type(data):
     b += bytes_value
     return b
 def encode_dict(data):
-    print("encode dict")
     b = bytes()
     for key, value in data.items():
        # print("key length of key %s is %d, %s" %(key, len(key), bytes([len(key)])) )
@@ -209,12 +208,10 @@ def decode_any_type(data, type):
 
 
 def decode(data):
-    print("decoding data")
 #    print(data)
     ret={}
     buffer = Buffer(data)
     msg_type = int.from_bytes(buffer.read(4),'big')
-    print("msg_type: %d" % msg_type)
     ret['msg_type'] = msg_type
     t = buffer.read(1)[0]
     buffer.read(4)
