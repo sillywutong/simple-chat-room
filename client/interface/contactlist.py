@@ -238,11 +238,15 @@ class ContactList(tk.Frame):
                     if msg['target_username'] == client_global.current_user \
                     else msg['target_username']
                 del msg['target_username'], msg['is_private']
+                if uname not in client_global.contacts_private:
+                    client_global.contacts_private[uname] = []
                 if len(client_global.contacts_private[uname]) == 0 or client_global.contacts_private[uname][-1] != msg:
                     client_global.contacts_private[uname].append(msg)
             else:
                 gid = msg['group_id']
                 del msg['group_id'], msg['is_private']
+                if gid not in client_global.contacts_group:
+                    client_global.contacts_group[gid] = []
                 if len(client_global.contacts_group[gid]) == 0 or client_global.contacts_group[gid][-1] != msg:
                     client_global.contacts_group[gid].append(msg)
             self.refresh_contacts()
