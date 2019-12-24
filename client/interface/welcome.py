@@ -25,7 +25,7 @@ class WelcomePage(tk.Frame):
         self.dialogbox.pack(anchor=tk.CENTER, pady=10, padx=40)
         
         connection = True
-        if client_global.session == None:
+        if not client_global.session.socket or not client_global.session.session_key:
             try:
                 self.session_init()
             except ConnectionError:

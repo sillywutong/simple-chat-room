@@ -5,26 +5,23 @@ from server import database
 def run(session, parameters):
     """
     # ADD_FRINED : (str)username
-    # STATUS_ADD_FRIEND: [bool, str]
+    # STATUS_ADD_FRIEND: {'success':, 'error':, 'username':}
     如果bool为False， 而str是空字符串，打开旧的聊天窗口。
     """
-    friend_name = parameters
-    c = database.get_cursor()
-    friend = c.execute('SELECT id FROM users WHERE username=?', [friend_name]).fetchall()
-    if len(friend) != 0:
+    friend = parameters
+    if friend != None:
         # 该用户存在，先看两人是不是已经是朋友
-        if database.is_friend(session.user_id, friend[0][0]):
-            session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '']) #在旧的聊天窗口打开
-        elif friend[0][0] == session.user_id:
-            session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '不能与自己发起聊天'])
+        if database.is_friend(session.username, friend):
+            session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'username': friend}) #在旧的聊天窗口打开
+        elif friend == session.username:
+            session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'error': '不能与自己发起聊天', 'username': friend})
             return
         else:
-            database.add_friend(session.user_id, friend[0][0])
-            session.send(GeneralMessage.STATUS_ADD_FRIEND, [True, ''])
+            database.add_friend(session.username, friend)
+            session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': True, 'username': friend})
+            if friend in username_to_session:
+                username_to_session[friend].send(GeneralMessage.NEW_FRIEND, {'username': session.username})
     else:
-        session.send(GeneralMessage.STATUS_ADD_FRIEND, [False, '用户名不存在'] )
+        session.send(GeneralMessage.STATUS_ADD_FRIEND, {'success': False, 'error': '用户名不存在', 'username': friend} )
     
-    c = database.get_cursor()
-    uname = c.execute('SELECT username FROM users WHERE id=?', [session.user_id]).fetchone()[0]
-    if friend[0][0] in user_id_to_session:
-        user_id_to_session[friend[0][0]].send(GeneralMessage.NEW_FRIEND, [session.user_id, uname])
+    

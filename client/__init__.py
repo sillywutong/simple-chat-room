@@ -14,9 +14,9 @@ def run():
     root.title("chatbot")
     client_global.tkroot = root
     
-    root.withdraw()
     WelcomeWindow()
-    if client_global.session:
+    root.withdraw()
+    if client_global.session.socket:
     #LoginWindow(login)
 
         #_thread.start_new_thread(main_listener_thread,(client_global.session, client_global.tkroot))

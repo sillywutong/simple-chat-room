@@ -6,6 +6,10 @@ from common.message import GeneralMessage
 from client.interface.register import RegisterForm
 from client.listener import add_listener, remove_listener
 from client.interface.contactlist import ContactList
+
+import os
+import json
+
 class LoginWindow(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -42,6 +46,7 @@ class LoginWindow(tk.Frame):
 
         add_listener(self.handle_response)
         print("listener added")
+
     def login_clicked(self):
         username = self.username.get()
         password = self.password.get()
@@ -61,16 +66,18 @@ class LoginWindow(tk.Frame):
             else:
                 tk.messagebox.showerror(message="Incorrect password, please check your input.")
         elif msg_type == GeneralMessage.LG_OK:
-            user_id = msg_body[0]
-            username = msg_body[1]
-            client_global.current_user['id'] = user_id
-            client_global.current_user['username'] = username
-            print("current id: %d" %user_id)
+            client_global.current_user = msg_body['username']
             # TODO: open the main window.
             # close the login window.
             # never want to receive message from server.
             print("close login window and remove listener")
             remove_listener(self.handle_response)
+            '''
+            if not os.path.exists(client_global.path):
+                os.mkdir(client_global.path)
+            with open(os.path.join(client_global.path, client_global.current_user + '.json'), 'w+') as f:
+                client_global.contacts = json.load(f)
+            '''
             self.master.destroy()
             contactwnd = tk.Toplevel(client_global.tkroot, takefocus=True)
             ContactList(contactwnd)

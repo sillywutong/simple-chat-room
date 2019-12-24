@@ -13,7 +13,7 @@ def main_listener_thread(session, tk_root):
     bytes_buffer = bytes()  #每一个会话接收包，但可能不是一次性接收到完整的包
     received = 0    #目前这个包收到了多少字节
     to_receive = 0   #是每一个会话接收到前4个字节length of message之后，接下来要接收直到整个包完成的大小
-    while(1):
+    while(tk_root):
         rlist, wlist, xlist = select.select([session.socket], [session.socket],[])
         if len(rlist): 
             if received == 0 and to_receive == 0: #接收一个新的包
@@ -69,17 +69,18 @@ def main_listener_thread(session, tk_root):
 
 def add_listener(listener):
     specific_listener.append(listener)
+
 def remove_listener(listener):
     print("listener removed.")
     if listener in specific_listener:
         specific_listener.remove(listener)
-def add_chat_window(target_type, target_id):
+
+def add_chat_window(listener, target_type, target_id):
     chat_window_listener[target_type][target_id]=listener
+
 def remove_chat_window(target_type, target_id):
     if target_id in chat_window_listener[target_type]:
         del chat_window_listener[target_type][target_id]
-
-
 
 def process_and_show_message(data):
     """

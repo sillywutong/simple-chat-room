@@ -1,15 +1,14 @@
-path=''   #聊天记录的文件目录，用target_name.json??  
+from common.channel import Session
+path='history'   #聊天记录的文件目录，用target_name.json??  
 
-current_user={'id': 0, 'username': 000}
-session = None
+current_user=''
+session = Session.Session(None, None)
 shared_key = ''
 
-listening_window={}
-
-last_msg = [{},{}]    # last_msg[0]是私聊， last_msg[1]是群聊，字典格式是'target_id': msg
-last_time = [{},{}]   # 每个窗口最后收到消息的时间，按时间排序
-
-chat_window = []
-instances = []
-
 tkroot = None
+
+friends = set() # set of usernames
+groups = {} # get group_name and group_members(set) by group_id
+contacts_private = {} # {username: [{type, time, data, source_username}]}
+contacts_group = {} # {group_id: [{}]}
+tk_img_ref = []

@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+server/database/db
+server/database.db
+history/A.json
+test/1.jpg
+server/database.db
+clear.py

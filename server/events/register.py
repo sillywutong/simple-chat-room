@@ -9,14 +9,12 @@ def run(session, parameters):
     """
     username = parameters[0]
     password = parameters[1]
-    c = database.get_cursor()
-    r = c.execute('SELECT * FROM users WHERE username=?', [username]).fetchone()
+    r = database.get_user_by_name(username)
     if r:
         # 用户名已存在
         session.send(GeneralMessage.REG_FAIL, 0)
 
     else:
-        user_id = database.add_user(username, md5(password))
-        session.send(GeneralMessage.REG_OK, [user_id, username])
+        database.add_user(username, md5(password))
+        session.send(GeneralMessage.REG_OK, {})
         #注册成功之后还得登录才行
-    
