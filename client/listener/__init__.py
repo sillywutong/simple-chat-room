@@ -5,6 +5,8 @@ import tkinter as tk
 from tkinter import messagebox
 from common.message import GeneralMessage
 import struct
+from client import client_global
+from common.channel import Session
 
 specific_listener=[]
 chat_window_listener=[{},{}]   #[0]私聊，[1]群聊，'target_id'
@@ -56,6 +58,7 @@ def main_listener_thread(session, tk_root):
                 data = session.get_message(bytes_buffer)
                 if data['msg_type'] == GeneralMessage.KICK:
                     messagebox.showerror(message="您的账号在别处登录")
+                    kick(tk_root)
                 if data['msg_type'] == GeneralMessage.GENERAL_ERROR:
                     messagebox.showerror(message=data['msg_body'])
                 if data['msg_type'] == GeneralMessage.PASS:
@@ -64,7 +67,14 @@ def main_listener_thread(session, tk_root):
                 for listener in specific_listener:
                     listener(data['msg_type'], data['msg_body'])
                 bytes_buffer = bytes()
-    print("done while")
+def kick(tk_root):
+    child=[]
+    for key in tk_root.children:
+        child.append(tk_root.children[key])
+    for i in child:
+        i.destroy()
+    tk_root.destroy()
+
 
 
 def add_listener(listener):

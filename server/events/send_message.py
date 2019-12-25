@@ -28,9 +28,10 @@ def run(session, parameters):
         # session.send(GeneralMessage.PASS, msg) 跟其他member一起发
         group_id = parameters['group_id']
         members = database.get_group_members(group_id)
+        database.add_chat_history(**msg)
         for member in members:
             if member in username_to_session:
                 username_to_session[member].send(GeneralMessage.PASS, msg)
-            else:
-                database.add_chat_history(**msg)
+#            else:
+#               database.add_chat_history(**msg)
                 
