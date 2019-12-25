@@ -1,4 +1,30 @@
 # 基于Socket的聊天室设计
+## 0  如何使用
+```
+git clone https://github.com/sillywutong/simple-chat-room.git
+```
+
+拉取代码
+
+```
+pip install pycryptodome
+pip install pillow
+```
+
+下载依赖
+
+```
+python server.py
+```
+
+开启服务器
+
+```
+python client.py
+```
+
+开启用户程序，可开启多个
+ip和端口在`config.json`中设置。
 
 ## 1  Basic Idea
 
