@@ -12,5 +12,5 @@ class ChatForm(Toplevel):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
     def on_closing(self):
         if not self.child is None:
-            remove_listener(self.child.handle_message)
+            remove_listener(self.child.handle)
         self.destroy()

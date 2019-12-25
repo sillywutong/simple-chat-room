@@ -117,7 +117,7 @@ class ContactList(tk.Frame):
     def on_new_group(self):
         group_name = simpledialog.askstring(title="Create a group", prompt="Your new group's name:", parent=None)
         if group_name:
-            GroupCreater(Toplevel(client_global.tkroot, takefocus=True), group_name)
+            GroupCreater(ChatForm(client_global.tkroot, takefocus=True), group_name)
 
     def handle_message(self, msg_type, msg_data):
         if msg_type==GeneralMessage.INITIALIZE:

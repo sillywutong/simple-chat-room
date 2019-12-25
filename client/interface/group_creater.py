@@ -24,7 +24,7 @@ class GroupCreater(Frame):
     def on_ok(self):
         gms = []
         for i in range(len(self.friends)):
-            if self.vars[i]:
+            if self.vars[i].get():
                 gms.append(self.friends[i])
         msg = [self.gname, gms + [client_global.current_user]]
         client_global.session.send(GeneralMessage.CREATE_G, msg)

@@ -26,7 +26,7 @@ class ChatWindow(tk.Frame):
         self.master.child = self
         self.contact = contact
         self.user_listbox = tk.Listbox(self, bg='#EEE')
-        add_listener(self.handle_message)
+        add_listener(self.handle)
         master.resizable(width=True, height=True)
         master.geometry('660x500')
         master.minsize(520, 370)
@@ -80,7 +80,7 @@ class ChatWindow(tk.Frame):
         for msg in msgs:
             self.digest_message(msg)
 
-    def handle_message(self, msg_type, msg_data):
+    def handle(self, msg_type, msg_data):
         if msg_type == GeneralMessage.PASS:
             if self.contact['is_private'] and msg_data['is_private']:
                 source = msg_data['source_username']
