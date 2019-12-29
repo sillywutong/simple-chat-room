@@ -357,7 +357,7 @@ class ContactList(tk.Frame):
             return None
         index = self.group_listbox.curselection()[0]
         gid = self.group_list[-index-1]
-        form = Toplevel(client_global.tkroot, takefocus=True)
+        form = ChatForm(client_global.tkroot, takefocus=True)
         ChatWindow({'is_private': False, 'group_id': gid}, form)
         # pprint(selected_user_id)
         return
